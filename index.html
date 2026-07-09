@@ -6,12 +6,12 @@
 <meta name="description" content="Draw a card from Brian Eno &amp; Peter Schmidt's Oblique Strategies — press any key when you're stuck.">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#121412">
-<title>Oblique Strategies</title>
+<title>Oblique Strategies — Whyte Erminae</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%3E%3Crect%20width='16'%20height='16'%20rx='3'%20fill='%23121412'/%3E%3Crect%20x='4.5'%20y='2.5'%20width='7'%20height='11'%20rx='1'%20fill='none'%20stroke='%23a4c94b'/%3E%3Cpath%20d='M6%206h4M6%208h3'%20stroke='%237b8c5a'%20stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
   *{box-sizing:border-box}
   :root{
-    --bg:#121412; --fg:#7b8c5a; --glow:#a4c94b; --dim:#39412b;
+    --bg:#121412; --fg:#7b8c5a; --glow:#a4c94b; --dim:#39412b; --panel:#171a14;
   }
   html,body{margin:0}
   body{
@@ -34,38 +34,78 @@
   }
   .prompt{ font-size:clamp(.9rem,2.4vw,1.05rem); margin:0; letter-spacing:.02em; user-select:none; }
   .prompt .user{ color:var(--glow); font-weight:700; }
+  .prompt .pwd{ color:var(--fg); }
   .prompt .dollar{ opacity:.6; }
   .cursor{ display:inline-block; width:.6ch; background:var(--glow); color:transparent;
            animation:blink 1.1s steps(1) infinite; }
   @keyframes blink{ 50%{ opacity:0 } }
+  .prompt-sub{ margin:.45rem 0 0; font-size:.78rem; opacity:.5; letter-spacing:.04em; user-select:none; }
+  .prompt-sub::before{ content:"# "; }
 
-  .stage{ flex:1 1 auto; display:flex; flex-direction:column; justify-content:center; padding:2.5rem 0; }
+  .stage{ flex:1 1 auto; display:flex; flex-direction:column; justify-content:center; padding:clamp(1.6rem,4vw,2.5rem) 0; }
+
+  /* TUI framed panel — the maykstuff box: legend on the top rule, + corners */
+  .panel{ position:relative; border:1px solid var(--fg); background:var(--panel);
+          padding:clamp(1.9rem,4vw,2.4rem) clamp(1.2rem,4vw,1.9rem) clamp(1.4rem,4vw,1.7rem); }
+  .panel > .legend{
+    position:absolute; top:0; left:1.1rem; transform:translateY(-52%);
+    margin:0; padding:0 .55rem; background:var(--bg);
+    font-size:.74rem; letter-spacing:.24em; text-transform:uppercase; font-weight:700; color:var(--glow);
+  }
+  .panel > .legend::before{ content:"┤ "; color:var(--fg); }
+  .panel > .legend::after { content:" ├"; color:var(--fg); }
+  .panel::before,.panel::after{ position:absolute; color:var(--fg); font-size:1rem; line-height:1; }
+  .panel::before{ content:"+"; left:-1px; bottom:-1px; }
+  .panel::after { content:"+"; right:-1px; bottom:-1px; }
+
   .card{ max-width:70ch; }
   .rule{ white-space:pre; overflow:hidden; max-width:100%; opacity:.55;
          font-size:clamp(1rem,3vw,1.3rem); line-height:1.2; }
   .text{ margin:.4em 0; font-weight:700; color:var(--glow);
          font-size:clamp(1rem,3vw,1.3rem); line-height:1.55;
          text-shadow:0 0 12px rgba(164,201,75,.35); overflow-wrap:break-word; }
-  .hint{ margin:1.7rem 0 0; font-size:.78rem; opacity:.5; letter-spacing:.04em; user-select:none; }
-  footer{ font-size:.72rem; opacity:.45; letter-spacing:.04em; line-height:1.5; user-select:none; }
+  .hint{ margin:1.5rem 0 0; font-size:.78rem; opacity:.5; letter-spacing:.04em; user-select:none; }
+
+  /* ko-fi support — a command worth running (matches the maykstuff pages) */
+  .kofi-line{ margin:clamp(1.8rem,4vw,2.4rem) 0 .4rem; }
+  .kofi{ color:var(--glow); font-weight:700; text-decoration:none;
+    text-shadow:0 0 9px rgba(164,201,75,.35); transition:text-shadow .2s; }
+  .kofi .k-cup{ opacity:.85; }
+  .kofi:hover,.kofi:focus-visible{ text-decoration:underline; text-shadow:0 0 15px rgba(164,201,75,.65); }
+  .kofi:focus-visible{ outline:1px solid var(--glow); outline-offset:2px; }
+
+  footer{ margin-top:1.4rem; font-size:.72rem; opacity:.5; letter-spacing:.04em; line-height:1.6; user-select:none; }
+  footer .dollar{ opacity:.6; color:var(--glow); }
+  footer a{ color:var(--glow); text-decoration:none; }
+  footer a:hover,footer a:focus-visible{ text-decoration:underline; }
 </style>
 </head>
 <body>
 <pre id="life" aria-hidden="true"></pre>
 
 <main>
-  <p class="prompt"><span class="user">whyte@erminae</span>:<span>~/oblique</span><span class="dollar">$</span> ./Oblique_Strategies.py<span class="cursor">_</span></p>
+  <p class="prompt"><span class="user">whyte@erminae</span>:<span class="pwd">~/oblique</span><span class="dollar">$</span> ./Oblique_Strategies.py<span class="cursor">_</span></p>
+  <p class="prompt-sub">156 cards &middot; a nudge for when you're stuck</p>
 
   <div class="stage">
-    <div class="card">
-      <div class="rule" aria-hidden="true"></div>
-      <p class="text" id="text" aria-live="polite"></p>
-      <div class="rule" aria-hidden="true"></div>
-    </div>
-    <p class="hint" id="hint" aria-live="polite"></p>
+    <section class="panel">
+      <span class="legend">oblique strategies</span>
+      <div class="card">
+        <div class="rule" aria-hidden="true"></div>
+        <p class="text" id="text" aria-live="polite"></p>
+        <div class="rule" aria-hidden="true"></div>
+      </div>
+      <p class="hint" id="hint" aria-live="polite"></p>
+    </section>
   </div>
 
-  <footer># Oblique Strategies &middot; 156 cards: 113 after Brian Eno &amp; Peter Schmidt (&copy; 1975), 43 my own &middot; an html port of a python port of an emacs port</footer>
+  <p class="prompt kofi-line"><span class="user">whyte@erminae</span>:<span class="pwd">~/oblique</span><span class="dollar">$</span> <a class="kofi" href="https://ko-fi.com/T5F122USRI" target="_blank" rel="noopener">./buy-me-a-kofi.sh <span class="k-cup">c[_]</span></a></p>
+  <p class="prompt-sub"># running this script tips the maintainer — thank you!</p>
+
+  <footer>
+    <span class="dollar">$</span> 156 cards: 113 after Brian Eno &amp; Peter Schmidt (&copy; 1975), 43 my own &middot; an html port of a python port of an emacs port<br>
+    <span class="dollar">$</span> <a href="https://github.com/TheWhyteWolf/Oblique">[src]</a> &nbsp;·&nbsp; <a href="https://thewhytewolf.github.io/">[maykstuff]</a>
+  </footer>
 </main>
 
 <script>

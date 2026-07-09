@@ -1,5 +1,7 @@
 # Oblique Strategies
 
+**Play it in the browser: <https://thewhytewolf.github.io/Oblique/>**
+
 A nudge for when you're stuck. Draw a card; if the studio wisdom of Brian
 Eno and Peter Schmidt won't shake it loose, maybe one of the stranger cards
 will.
@@ -19,9 +21,10 @@ sigils in the ultrasonic, the Old Ones, a fundamental tuned to a dying star.
   ./Oblique_Strategies.py --once   # one card, then exit
   ```
 
-- **`Oblique_Strategies.html`** — the same deck as a single file for the
+- **`index.html`** — the same deck as a single self-contained file for the
   browser, over a faint drifting field of Conway's Game of Life. Any key (or a
-  tap) deals another.
+  tap) deals another. This is what's served at the link above; open the file
+  directly to run it offline.
 
 An html port of a python port of [an emacs
 port](https://github.com/wandersoncferreira/oblique-strategies) of the deck.
