@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Draw a card from Brian Eno &amp; Peter Schmidt's Oblique Strategies — press any key when you're stuck.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#121412">
+<title>Oblique Strategies</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%3E%3Crect%20width='16'%20height='16'%20rx='3'%20fill='%23121412'/%3E%3Crect%20x='4.5'%20y='2.5'%20width='7'%20height='11'%20rx='1'%20fill='none'%20stroke='%23a4c94b'/%3E%3Cpath%20d='M6%206h4M6%208h3'%20stroke='%237b8c5a'%20stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --bg:#121412; --fg:#7b8c5a; --glow:#a4c94b; --dim:#39412b;
+  }
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+    overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--glow); color:var(--bg); }
+  #life{
+    position:fixed; inset:0; margin:0; z-index:0;
+    color:var(--fg); opacity:.08;
+    font-size:15px; line-height:16px; white-space:pre; overflow:hidden;
+    pointer-events:none; user-select:none;
+  }
+  main{
+    position:relative; z-index:1; max-width:960px; margin:0 auto;
+    min-height:100vh; min-height:100svh;
+    display:flex; flex-direction:column;
+    padding:clamp(1.4rem,4vw,3rem) clamp(1.1rem,4vw,2.4rem);
+  }
+  .prompt{ font-size:clamp(.9rem,2.4vw,1.05rem); margin:0; letter-spacing:.02em; user-select:none; }
+  .prompt .user{ color:var(--glow); font-weight:700; }
+  .prompt .dollar{ opacity:.6; }
+  .cursor{ display:inline-block; width:.6ch; background:var(--glow); color:transparent;
+           animation:blink 1.1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0 } }
+
+  .stage{ flex:1 1 auto; display:flex; flex-direction:column; justify-content:center; padding:2.5rem 0; }
+  .card{ max-width:70ch; }
+  .rule{ white-space:pre; overflow:hidden; max-width:100%; opacity:.55;
+         font-size:clamp(1rem,3vw,1.3rem); line-height:1.2; }
+  .text{ margin:.4em 0; font-weight:700; color:var(--glow);
+         font-size:clamp(1rem,3vw,1.3rem); line-height:1.55;
+         text-shadow:0 0 12px rgba(164,201,75,.35); overflow-wrap:break-word; }
+  .hint{ margin:1.7rem 0 0; font-size:.78rem; opacity:.5; letter-spacing:.04em; user-select:none; }
+  footer{ font-size:.72rem; opacity:.45; letter-spacing:.04em; line-height:1.5; user-select:none; }
+</style>
+</head>
+<body>
+<pre id="life" aria-hidden="true"></pre>
+
+<main>
+  <p class="prompt"><span class="user">whyte@erminae</span>:<span>~/oblique</span><span class="dollar">$</span> ./Oblique_Strategies.py<span class="cursor">_</span></p>
+
+  <div class="stage">
+    <div class="card">
+      <div class="rule" aria-hidden="true"></div>
+      <p class="text" id="text" aria-live="polite"></p>
+      <div class="rule" aria-hidden="true"></div>
+    </div>
+    <p class="hint" id="hint" aria-live="polite"></p>
+  </div>
+
+  <footer># Oblique Strategies &middot; 156 cards: 113 after Brian Eno &amp; Peter Schmidt (&copy; 1975), 43 my own &middot; an html port of a python port of an emacs port</footer>
+</main>
+
+<script>
+var DECK=[
+  "(Organic) machinery",
+  "A line has two sides",
+  "Abandon normal instruments",
+  "Accept advice",
+  "Accretion",
+  "Allow a parameter to fold in on itself, creating an impossible, non-Euclidean modulation shape.",
+  "Allow a single sound to decay completely into absolute zero before the next event begins.",
+  "Allow an easement (an easement is the abandonment of a stricture)",
+  "Are there sections? Consider transitions",
+  "Ask people to work against their better judgement",
+  "Ask your body",
+  "Assemble some of the instruments in a group and treat the group",
+  "Automate a modulation path using a pattern that repeats only once every ten thousand years.",
+  "Avoid structure",
+  "Balance the consistency principle with the inconsistency principle",
+  "Be dirty",
+  "Become your own omen",
+  "Beware the Labyrinth",
+  "Breathe more deeply",
+  "Bridges -build -burn",
+  "Bury a whispered curse in the sidechain trigger.",
+  "Cascades",
+  "Cease",
+  "Change instrument roles",
+  "Change nothing and continue with immaculate consistency",
+  "Children's voices -speaking -singing",
+  "Cluster analysis",
+  "Compose as if the audio will only be decoded by entities sleeping beneath a frozen ocean.",
+  "Consider different fading systems",
+  "Consider the composition finished precisely when you feel the urge to add something new.",
+  "Consult other sources -promising -unpromising",
+  "Convert a melodic element into a rhythmic element",
+  "Courage!",
+  "Create a mysterious moment",
+  "Cut a vital connection",
+  "Decorate, decorate",
+  "Define an area as `safe' and use it as an anchor",
+  "Destroy -nothing -the most important thing",
+  "Discard an axiom",
+  "Disconnect from desire",
+  "Discover the recipes you are using and abandon them",
+  "Dissolve the primary element into granular ash, then coagulate it into a new, unrecognizable form.",
+  "Dissonance is merely a harmony your species is not yet ancient enough to comprehend.",
+  "Distorting time",
+  "Do not force the frequency to bend; accept the resonance exactly as it is.",
+  "Do nothing for as long as possible",
+  "Do something boring",
+  "Do the washing up",
+  "Do the words need changing?",
+  "Do we need holes?",
+  "Don't be afraid of things because they're easy to do",
+  "Don't be frightened of cliches",
+  "Don't be frightened to display your talents",
+  "Don't break the silence",
+  "Don't stress one thing more than another",
+  "Draw a binding sigil with your automation curves and hide it entirely within the ultrasonic.",
+  "Emphasize differences",
+  "Emphasize repetitions",
+  "Emphasize the flaws",
+  "Faced with a choice, do both (given by Dieter Roth)",
+  "Feedback recordings into an acoustic situation",
+  "Fill every beat with something",
+  "Get your neck massaged",
+  "Ghost echoes",
+  "Give the game away",
+  "Give way to your worst impulse",
+  "Go slowly all the way round the outside",
+  "Honor thy error as a hidden intention",
+  "How would you have done it?",
+  "Humanize something free of error",
+  "Ignore flaws",
+  "Imagine the music as a moving chain or caterpillar",
+  "Imagine the music as a set of disconnected events",
+  "Infinitesimal gradations",
+  "Intentions -credibility of -nobility of -humility of",
+  "Into the impossible",
+  "Invert the phase of your most beloved layer and let the destructive interference consume it.",
+  "Invoke the law of equivalent exchange: entirely sacrifice the fundamental frequency to empower the upper harmonics.",
+  "Is it finished?",
+  "Is the tuning appropriate?",
+  "Is there something missing?",
+  "Just carry on",
+  "Left channel, right channel, centre channel",
+  "Listen in total darkness, or in a very large room, very quietly",
+  "Listen to the phase cancellation; what entity fills the absolute silence?",
+  "Listen to the quiet voice",
+  "Look at a very small object, look at its centre",
+  "Look at the order in which you do things",
+  "Look closely at the most embarrassing details and amplify them",
+  "Lowest common denominator check -single beat -single note -single riff",
+  "Make a blank valuable by putting it in an exquisite frame",
+  "Make an exhaustive list of everything you might do and do the last thing on the list",
+  "Make a sudden, destructive unpredictable action; incorporate",
+  "Mechanicalize something idiosyncratic",
+  "Mute and continue",
+  "Mute the most important element; observe what the emptiness reveals.",
+  "Nap somewhere you haven't",
+  "Only one element of each kind",
+  "Overtly resist change",
+  "Please the Old Ones",
+  "Put in earplugs",
+  "Reject the pristine; exalt the clipping point as the highest sonic virtue.",
+  "Remember those quiet evenings",
+  "Remove ambiguities and convert to specifics",
+  "Remove one more layer.",
+  "Remove specifics and convert to ambiguities",
+  "Render the project, delete the source stems, and work only with the ghost echoes left in your memory.",
+  "Repetition is a form of change",
+  "Reverse",
+  "Rise, gather energy, disperse it",
+  "Route a closed feedback loop until the system speaks in tongues; record the possession.",
+  "Sacrifice the core",
+  "Sacrifice your cleanest transient to appease the sub-bass.",
+  "Sculpt the silence between the notes, not the notes themselves.",
+  "Short circuit (example: a man eating peas with the idea that they will improve his virility shovels them straight into his lap)",
+  "Shut the door and listen from outside",
+  "Simple subtraction",
+  "Spectrum analysis",
+  "Stop that! Do something else",
+  "Swap your feedback mechanism (change speakers, keyboard)",
+  "Syncopate",
+  "Take a break",
+  "Take a walk, tune in to something small",
+  "Take away the elements in order of apparent non-importance",
+  "Take it somewhere you're not supposed to",
+  "Take time to reflect/refract",
+  "Tape your mouth (given by Ritva Saarikko)",
+  "The birds are sending you a message",
+  "The inconsistency principle",
+  "The tape is now the music",
+  "Think of the radio",
+  "Tidy up",
+  "Transmute the lowest, muddiest frequencies into gold through violent, multiband saturation.",
+  "Treat the silence as the primary instrument; the audio merely frames it.",
+  "Treat the timeline as a cyclopean monument—view it all at once, not from left to right.",
+  "Trust in the you of now",
+  "Tune a fundamental frequency to the resonant rotation of a dying star.",
+  "Turn it upside down",
+  "Twist the spine",
+  "Un-ask the question: delete the equalizer and simply lower the fader.",
+  "Use \"unqualified\" people",
+  "Use an old idea",
+  "Use an unacceptable color",
+  "Use fewer notes",
+  "Use filters",
+  "Water",
+  "What are you really thinking about just now? Incorporate",
+  "What if you had, like, 50 instruments in unison?",
+  "What is the reality of the situation?",
+  "What mistakes did you make last time?",
+  "What would your closest friend do?",
+  "What wouldn't you do?",
+  "Work at a different speed",
+  "You are an engineer",
+  "You can only make one dot at a time",
+  "You don't have to be ashamed of using your own ideas"
+];
+</script>
+<script>
+(function(){
+  var textEl=document.getElementById('text'),
+      hint=document.getElementById('hint'),
+      rules=document.querySelectorAll('.rule'),
+      reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      coarse=window.matchMedia&&window.matchMedia('(pointer: coarse)').matches,
+      DASHES='-'.repeat(70),
+      HINT=coarse?'# tap anywhere for another':'# press any key for another, q to quit',
+      current=null, hintTimer=null;
+
+  hint.textContent=HINT;
+
+  function draw(){
+    var s=current;
+    while(s===current) s=DECK[Math.floor(Math.random()*DECK.length)];
+    current=s;
+    textEl.textContent=s;
+    var w=Math.min(Math.round(s.length*1.3),70);
+    for(var i=0;i<rules.length;i++){ rules[i].textContent=DASHES; rules[i].style.width=w+'ch'; }
+    if(!reduce&&textEl.animate)
+      textEl.animate([{opacity:.25},{opacity:1}],{duration:150,easing:'ease-out'});
+  }
+
+  function quitJoke(){
+    hint.textContent='# no tty here — close the tab to quit';
+    clearTimeout(hintTimer);
+    hintTimer=setTimeout(function(){ hint.textContent=HINT; },2600);
+  }
+
+  window.addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey||e.repeat) return;
+    var k=e.key;
+    if(k==='Tab'||k==='Escape'||k==='Shift'||k==='Control'||k==='Alt'||k==='Meta'||k==='CapsLock'||/^F\d{1,2}$/.test(k)) return;
+    if(k===' ') e.preventDefault();
+    if(k==='q'||k==='Q'){ quitJoke(); return; }
+    draw();
+  });
+  document.addEventListener('click',function(){
+    var sel=window.getSelection&&window.getSelection();
+    if(sel&&String(sel).length) return;  // mid-copy: don't yank the card away
+    draw();
+  });
+
+  draw();
+})();
+</script>
+<script>
+(function(){
+  var pre=document.getElementById('life'); if(!pre) return;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cols,rows,grid,nxt,cw,ch,tick=0;
+  var DENSITY=0.09, ALIVE='+', DEAD=' ', INTERVAL=560, RESEED=540;
+  function measure(){
+    var cs=getComputedStyle(pre), s=document.createElement('span');
+    s.style.cssText='position:absolute;visibility:hidden;white-space:pre';
+    s.style.fontFamily=cs.fontFamily; s.style.fontSize=cs.fontSize; s.style.letterSpacing=cs.letterSpacing;
+    s.textContent='##########'; document.body.appendChild(s);
+    cw=s.getBoundingClientRect().width/10; document.body.removeChild(s);
+    ch=parseFloat(cs.lineHeight)||16; if(!cw||cw<1) cw=9;
+  }
+  function seed(){ grid=new Uint8Array(cols*rows);
+    for(var i=0;i<grid.length;i++) grid[i]=Math.random()<DENSITY?1:0; nxt=new Uint8Array(cols*rows); }
+  function setup(){ measure();
+    cols=Math.max(1,Math.ceil(window.innerWidth/cw)+1);
+    rows=Math.max(1,Math.ceil(window.innerHeight/ch)+1); seed(); render(); }
+  function step(){
+    for(var y=0;y<rows;y++)for(var x=0;x<cols;x++){
+      var n=0;
+      for(var dy=-1;dy<=1;dy++)for(var dx=-1;dx<=1;dx++){
+        if(!dx&&!dy)continue;
+        n+=grid[((y+dy+rows)%rows)*cols+((x+dx+cols)%cols)];
+      }
+      var a=grid[y*cols+x];
+      nxt[y*cols+x]=((a&&(n===2||n===3))||(!a&&n===3))?1:0;
+    }
+    var t=grid; grid=nxt; nxt=t;
+  }
+  function render(){ var out='',i=0;
+    for(var y=0;y<rows;y++){ var l='';
+      for(var x=0;x<cols;x++) l+=grid[i++]?ALIVE:DEAD;
+      out+=l+'\n'; } pre.textContent=out; }
+  function loop(){ if(document.hidden) return; step(); render(); if(++tick%RESEED===0) seed(); }
+  setup();
+  var rt; window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(setup,250); });
+  if(!reduce) setInterval(loop,INTERVAL);
+})();
+</script>
+</body>
+</html>
