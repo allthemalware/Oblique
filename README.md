@@ -1,6 +1,6 @@
 # Oblique Strategies
 
-**Play it in the browser: <https://thewhytewolf.github.io/Oblique/>**
+**Play it in the browser: <https://allthemalware.github.io/Oblique/>**
 
 A nudge for when you're stuck. Draw a card; if the studio wisdom of Brian
 Eno and Peter Schmidt won't shake it loose, maybe one of the stranger cards
