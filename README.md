@@ -6,7 +6,7 @@ A nudge for when you're stuck. Draw a card; if the studio wisdom of Brian
 Eno and Peter Schmidt won't shake it loose, maybe one of the stranger cards
 will.
 
-**186 cards:** 113 after Eno & Schmidt's 1975 deck, plus 73 of my own —
+**215 cards:** 113 after Eno & Schmidt's 1975 deck, plus 102 of my own —
 sigils in the ultrasonic, the Old Ones, a fundamental tuned to a dying star.
 
 ## Two ways to draw
